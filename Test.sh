@@ -8,7 +8,7 @@
 #         CONFIGURACION        #
 #==============================#
 #audit.log registra todo
-LOG_FILE="/var/log/audit.log"
+LOG_FILE="/home/debian-adan/Desktop/Tesis/CIS-HARDENING/logs/audit.log"
 CIS_SECTION="$1"
 
 function log() {
@@ -37,10 +37,14 @@ function inicio() {
 
 # Ejecutar todos los scripts de test recursivamente
 function audit_modulos() {
-    local PASS_COUNT=0
-    local FAIL_COUNT=0
-    local WARN_COUNT=0
-    local TOTAL=0
+    TEMP_PASS_COUNT=$(mktemp)
+    TEMP_FAIL_COUNT=$(mktemp)
+    TEMP_TOTAL=$(mktemp)
+
+    echo 0 > "$TEMP_PASS_COUNT"
+    echo 0 > "$TEMP_FAIL_COUNT"
+    echo 0 > "$TEMP_TOTAL"
+
     TEST_DIR="./audit_modules"
     find "$TEST_DIR" -type f -name "*.sh" | while read -r script; do
         echo -e "\e[33m==============================\e[0m"
@@ -50,26 +54,32 @@ function audit_modulos() {
         echo "$output"
 
         if echo "$output" | grep -q "\*\* PASS \*\*"; then
-            ((PASS_COUNT++))
+            pass=$(<"$TEMP_PASS_COUNT")
+            echo $((pass + 1)) > "$TEMP_PASS_COUNT"
         elif echo "$output" | grep -q "\*\* FAIL \*\*"; then
-            ((FAIL_COUNT++))
+            fail=$(<"$TEMP_FAIL_COUNT")
+            echo $((fail + 1)) > "$TEMP_FAIL_COUNT"
         fi
         
-        ((TOTAL++))
+        total=$(<"$TEMP_TOTAL")
+        echo $((total + 1)) > "$TEMP_TOTAL"
     done
+
+    FAIL_COUNT=$(<"$TEMP_FAIL_COUNT")
+    PASS_COUNT=$(<"$TEMP_FAIL_COUNT")
+    TOTAL=$(<"$TEMP_TOTAL")
     
-    echo "==== RESULTADOS ===="
-    echo " Totales: $TOTAL"
-    echo " OK (PASS): $PASS_COUNT"
-    echo " Fallos (FAIL): $FAIL_COUNT"
-    echo " Advertencias (WARN): $WARN_COUNT"
+    log "==== RESULTADOS ===="
+    log " Totales: $TOTAL"
+    log " OK (PASS): $PASS_COUNT"
+    log " Fallos (FAIL): $FAIL_COUNT"
 
     if (( TOTAL > 0 )); then
         SCORE=$(( PASS_COUNT * 100 / TOTAL ))
-        echo " Puntaje de cumplimiento: $SCORE%"
-        echo "[$(date)] Score: $SCORE% ($PASS_COUNT/$TOTAL)" >> /var/log/test_score.log
+        log " Puntaje de cumplimiento: $SCORE%"
+        log "[$(date)] Score: $SCORE% ($PASS_COUNT/$TOTAL)" >> /var/log/test_score.log
     else
-        echo "Sin tests ejecutados."
+        log "Sin tests ejecutados."
     fi
 }
 
@@ -83,7 +93,9 @@ function hardening_modulos() {
         echo -e "\e[33m==============================\e[0m"
         echo -e "\e[33m Hardenizando => $script \e[0m"
         echo -e "\e[33m==============================\e[0m"
-        bash "$script"
+        salida=$(bash "$script") 
+        echo " ------------------------------------------"
+        echo "$salida"
     done
 }
 
