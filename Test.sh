@@ -37,13 +37,40 @@ function inicio() {
 
 # Ejecutar todos los scripts de test recursivamente
 function audit_modulos() {
+    local PASS_COUNT=0
+    local FAIL_COUNT=0
+    local WARN_COUNT=0
+    local TOTAL=0
     TEST_DIR="./audit_modules"
     find "$TEST_DIR" -type f -name "*.sh" | while read -r script; do
         echo -e "\e[33m==============================\e[0m"
         echo -e "\e[33m Auditando => $script \e[0m"
         echo -e "\e[33m==============================\e[0m"
-        bash "$script"
+        output=$(bash "$script")
+        echo "$output"
+
+        if echo "$output" | grep -q "\*\* PASS \*\*"; then
+            ((PASS_COUNT++))
+        elif echo "$output" | grep -q "\*\* FAIL \*\*"; then
+            ((FAIL_COUNT++))
+        fi
+        
+        ((TOTAL++))
     done
+    
+    echo "==== RESULTADOS ===="
+    echo " Totales: $TOTAL"
+    echo " OK (PASS): $PASS_COUNT"
+    echo " Fallos (FAIL): $FAIL_COUNT"
+    echo " Advertencias (WARN): $WARN_COUNT"
+
+    if (( TOTAL > 0 )); then
+        SCORE=$(( PASS_COUNT * 100 / TOTAL ))
+        echo " Puntaje de cumplimiento: $SCORE%"
+        echo "[$(date)] Score: $SCORE% ($PASS_COUNT/$TOTAL)" >> /var/log/test_score.log
+    else
+        echo "Sin tests ejecutados."
+    fi
 }
 
 #==============================#
