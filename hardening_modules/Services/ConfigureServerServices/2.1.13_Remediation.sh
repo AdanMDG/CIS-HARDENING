@@ -2,21 +2,13 @@
 #CIS Hardening 
 {
 if dpkg-query -W -f='${binary:Package}\t${Status}\t${db:Status-Status}\n' rsync | grep -q "installed"; then
-    echo "- rsync este instalado."
-    
-    systemctl stop rsync.service
-    echo "- rsync se acaba de detener"
-    # Verificar si es dependiente (no podemos saber con certeza desde aquí sin política local)
-    echo "- Intentando purgar rsync..."
 
+    # Verificar si es dependiente (no podemos saber con certeza desde aquí sin política local)
     if apt purge -y rsync; then
         echo "- rsync purgado exitosamente."
     else
-        echo "- No se pudo purgar rsync (puede ser dependencia)."
-        echo "- mask-eando el servicio..."
-        
+        echo "- No se pudo purgar rsync (puede ser dependencia)."     
         systemctl mask rsync.service 
-
         echo "- rsync.service fue detenido y mask-eado para evitar que se inicie."
     fi
 
