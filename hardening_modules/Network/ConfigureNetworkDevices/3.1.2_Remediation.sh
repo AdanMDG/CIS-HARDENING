@@ -19,9 +19,12 @@
     # En directorios llamados wireless carga en l_dname una lista de drivers de Wi-Fi que están actualmente en uso en tu sistema.
     if [ -n "$(find /sys/class/net/*/ -type d -name wireless)" ]; then
         l_dname=$(for driverdir in $(find /sys/class/net/*/ -type d -name wireless | xargs -0 dirname); do basename "$(readlink -f "$driverdir"/device/driver/module)";done | sort -u)
-    for l_mname in $l_dname; do
-        module_fix
-    done
+        for l_mname in $l_dname; do
+            module_fix
+        done
+    else
+        echo -e " No existe driver de wifi en uso en el sistema. "
     fi
+    echo -e "\n - remediation of module:  \033[0;32m > 2.1.13 > ** COMPLETE ** \033[0m \n"
 # echo -e " - Existe el Script para desabilitarlo pero esta comentado ya que en la creacion del script necesitaba internet y no queria desactivarlo, solo detectarlo."
 }

@@ -66,7 +66,7 @@ function audit_modulos() {
     done
 
     FAIL_COUNT=$(<"$TEMP_FAIL_COUNT")
-    PASS_COUNT=$(<"$TEMP_FAIL_COUNT")
+    PASS_COUNT=$(<"$TEMP_PASS_COUNT")
     TOTAL=$(<"$TEMP_TOTAL")
     
     log "==== RESULTADOS ===="

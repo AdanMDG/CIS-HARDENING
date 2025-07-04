@@ -59,7 +59,7 @@
     if [ -z "$l_output2" ]; then
         echo -e "\n- Audit Result:\n \033[0;32m ** PASS ** \033[0m \n$l_output\n"
     else
-        echo -e "\n- Audit Result:\n \033[0;32m ** FAIL ** \033[0m \n - Reason(s) for audit failure:\n$l_output2\n"
+        echo -e "\n- Audit Result:\n \033[0;31m ** FAIL ** \033[0m \n - Reason(s) for audit failure:\n$l_output2\n"
         [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
     fi
 }
