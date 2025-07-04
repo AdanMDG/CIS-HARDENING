@@ -13,8 +13,7 @@
     else
         echo -e "\n- Audit Result:\n  \033[0;31m ** FAIL ** \033[0m "
         sshd -T -C user=root -C host="$(hostname)" -C addr="$(hostname -I | cut -d ' ' -f1)" | grep permitrootlogin
-        echo -e " "
-        echo -e "Debe retornar: 'permitrootlogin no'"
+        echo -e "Debe retornar: 'permitrootlogin no' para prohibir completamente el acceso SSH como root"
     fi
 
     echo "[*] Auditoría finalizada."
