@@ -93,9 +93,7 @@ function hardening_modulos() {
         echo -e "\e[33m==============================\e[0m"
         echo -e "\e[33m Hardenizando => $script \e[0m"
         echo -e "\e[33m==============================\e[0m"
-        salida=$(bash "$script") 
-        echo " ------------------------------------------"
-        echo "$salida"
+        bash "$script"
     done
 }
 
