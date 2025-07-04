@@ -1,13 +1,13 @@
 #!/bin/bash
 
-echo "¿Desea realizar el hardening X? (s/n)"
+echo "¿Desea prohibir el inicio de sesión root mediante SSH? (s/n)"
 read -r respuesta
 if [[ "$respuesta" =~ ^[Ss]$ ]]; then
 
     CONFIG_FILE="/etc/ssh/sshd_config"
 
     # Eliminar configuraciones inseguras anteriores
-    echo "Eliminando líneas inseguras de PermitRootLogin..."
+    echo "Eliminando lineas inseguras de PermitRootLogin..."
     sed -i '/^\s*PermitRootLogin\s\+\(yes\|without-password\|prohibit-password\|forced-commands-only\)/Id' "$CONFIG_FILE"
 
     # Insertar PermitRootLogin no antes de Match/Include si existen
@@ -26,10 +26,10 @@ if [[ "$respuesta" =~ ^[Ss]$ ]]; then
     # Verificación final
     echo "Verificación de la configuración aplicada:"
     if sshd -T -C user=root -C host="$(hostname)" -C addr="$(hostname -I | cut -d ' ' -f1)" | grep permitrootlogin | grep -q "no"; then        
-            echo -e "\n - remediation of module:  \033[0;32m > 2.1.13 > ** COMPLETE ** \033[0m \n"
+            echo -e "\n - remediation of module:  \033[0;32m > 5.1.20 > ** COMPLETE ** \033[0m \n"
     else
-        echo "Error al hardenizar"
+        echo "\033[0;31m Error al hardenizar \033[0m "
     fi
 else
-    echo "\033[0;32m > 2.1.13 > ** Se omitio el hardening de '5.1.20 Ensure sshd PermitRootLogin is disabled' ** \033[0m"
+    echo " > 5.1.20 > \033[0;31m ** Se omitio el hardening de 5.1.20 Ensure sshd PermitRootLogin is disabled ** \033[0m "
 fi

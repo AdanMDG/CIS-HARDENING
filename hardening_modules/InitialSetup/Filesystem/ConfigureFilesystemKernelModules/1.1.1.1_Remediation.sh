@@ -44,5 +44,5 @@ for l_mdir in $l_mpath; do
         echo -e "\n - module: \"$l_mname\" doesn't exist in \"$l_mdir\"\n"
     fi
 done
-echo -e "\n - remediation of module: \"$l_mname\" complete\n"
+echo -e "\n - remediation of module:  \033[0;32m > 1.1.1.1 > ** COMPLETE ** \033[0m \n"
 }
