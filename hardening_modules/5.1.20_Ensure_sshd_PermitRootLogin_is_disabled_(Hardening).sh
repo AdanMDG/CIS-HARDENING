@@ -1,7 +1,7 @@
 #!/bin/bash
 
-echo "¿Desea prohibir el inicio de sesión root mediante SSH? (s/n)"
-read -r respuesta
+read -r -p "¿Desea prohibir el inicio de sesión root mediante SSH? (s/n): " respuesta
+
 if [[ "$respuesta" =~ ^[Ss]$ ]]; then
 
     CONFIG_FILE="/etc/ssh/sshd_config"
@@ -28,8 +28,8 @@ if [[ "$respuesta" =~ ^[Ss]$ ]]; then
     if sshd -T -C user=root -C host="$(hostname)" -C addr="$(hostname -I | cut -d ' ' -f1)" | grep permitrootlogin | grep -q "no"; then        
             echo -e "\n - remediation of module:  \033[0;32m > 5.1.20 > ** COMPLETE ** \033[0m \n"
     else
-        echo "\033[0;31m Error al hardenizar \033[0m "
+        echo -e "\033[0;31m Error al hardenizar \033[0m "
     fi
 else
-    echo " > 5.1.20 > \033[0;31m ** Se omitio el hardening de 5.1.20 Ensure sshd PermitRootLogin is disabled ** \033[0m "
+    echo -e " > 5.1.20 > \033[0;31m ** Se omitio el hardening de 5.1.20 Ensure sshd PermitRootLogin is disabled por el usuario. ** \033[0m "
 fi

@@ -1,0 +1,11 @@
+#!/bin/bash
+# CIS Audit - Verificar que AIDE este instalado o este deshabilitado
+
+# Verificar si AIDE este instalado
+if dpkg-query -W -f='${binary:Package}\t${Status}\t${db:Status-Status}\n' aide aide-common | grep -q "not-installed"; then
+    echo -e "\n- Audit Result:\n  \033[0;31m ** FAIL ** \033[0m "
+    echo "- AIDE no esta instalado."    
+else
+    echo -e "\n- Audit Result:\n  \033[0;32m ** PASS ** \033[0m "
+    echo "- AIDE esta instalado correctamente"
+fi
