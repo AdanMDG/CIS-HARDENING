@@ -10,7 +10,7 @@ GID_ROOT="root"
 
 
 if [ ! -e "$FILE" ]; then
-    echo -e "\n- Audit Result:\n  \033[0;31m ** FAIL ** \033[0m "
+    echo -e "\n- Audit Result:  \033[0;31m ** [FAIL] ** \033[0m "
     echo "- /etc/shadow no existe."   
     exit 1
 fi
@@ -42,9 +42,9 @@ fi
 
 # Resultado final
 if [ "$FAIL" -eq 0 ]; then
-    echo -e "  \033[0;32m** PASS **\033[0m $FILE esta correctamente configurado."
+    echo -e "  \033[0;32m** [PASS] **\033[0m $FILE esta correctamente configurado."
 else
-    echo -e "  \033[0;31m** FAIL **\033[0m $FILE requiere hardening."
+    echo -e "  \033[0;31m** [FAIL] **\033[0m $FILE requiere hardening."
     echo -e "$FILE debe ser 'Access: (0640/-rw-r-----) Uid: ( 0/ root) Gid: ( 42/ shadow)' pero es: "
     stat -Lc 'Access: (%#a/%A) Uid: ( %u/ %U) Gid: ( %g/ %G)' "$FILE"
 fi

@@ -26,8 +26,8 @@ function check_root() {
 #      SECCION 1: INICIO       #
 #==============================#
 
-function inicio() {
-    log "Iniciando script de hardening..."
+function actualizar_sistem() {
+    log "Actualizando el sistema y los paquetes base"
     apt update && apt upgrade -y
 }
 
@@ -48,10 +48,10 @@ function audit_modulos() {
     TEST_DIR="./audit_modules"
     find "$TEST_DIR" -type f -name "*.sh" | while read -r script; do
         echo -e "\e[33m==============================\e[0m"
-        echo -e "\e[33m Auditando => $script \e[0m"
-        echo -e "\e[33m==============================\e[0m"
         output=$(bash "$script")
-        echo "$output"
+        echo -e "\033[34m Auditando => $script => $output \033[0m"
+        echo -e "\e[33m==============================\e[0m"
+        
 
         if echo "$output" | grep -q "\*\* PASS \*\*"; then
             pass=$(<"$TEMP_PASS_COUNT")
@@ -105,14 +105,14 @@ function hardening_modulos() {
 function mostrar_ayuda() {
     echo "Uso: $0 [seccion]"
     echo "Secciones disponibles:"
-    echo "  inicio             -> Actualizar sistema y paquetes base"
+    echo "  actualizar_sistem             -> Actualizar sistema y paquetes base"
     echo "  audit              -> Audita el sistema "
     echo "  hardening          -> Hardeniza el sistema "
     echo "  todo               -> Ejecutar todo"
 }
 
 function ejecutar_todo() {
-    inicio
+    actualizar_sistem
     audit
     hardening
     audit
@@ -125,7 +125,7 @@ function ejecutar_todo() {
 check_root
 
 case "$CIS_SECTION" in
-    inicio) inicio ;;
+    actualizar_sistem) actualizar_sistem ;;
     audit) audit_modulos ;;
     hardening) hardening_modulos ;;
     todo) ejecutar_todo ;;
