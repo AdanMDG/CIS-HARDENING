@@ -44,5 +44,5 @@
             echo -e "\n - module: \"$l_mname\" doesn't exist in \"$l_mdir\"\n"
         fi
     done
-    echo -e "\n - remediation of module:  \033[0;32m > 1.1.1.6 > ** COMPLETE ** \033[0m \n"
+    echo -e "\n - Hardening del modulo 1.1.1.6 > \033[0;32m ** COMPLETA ** \033[0m \n"
 }

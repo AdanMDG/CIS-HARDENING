@@ -25,6 +25,6 @@
     else
         echo -e " No existe driver de wifi en uso en el sistema. "
     fi
-    echo -e "\n - remediation of module:  \033[0;32m > 3.1.2 > ** COMPLETE ** \033[0m \n"
+    echo -e "\n - Hardening del modulo 3.1.2 > \033[0;32m ** COMPLETA ** \033[0m \n"
 # echo -e " - Existe el Script para desabilitarlo pero esta comentado ya que en la creacion del script necesitaba internet y no queria desactivarlo, solo detectarlo."
 }

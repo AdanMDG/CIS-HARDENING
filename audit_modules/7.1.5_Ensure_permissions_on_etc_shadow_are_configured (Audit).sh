@@ -14,14 +14,13 @@ if [ ! -e "$FILE" ]; then
     echo "- /etc/shadow no existe."   
     exit 1
 fi
-
 NIVEL_ACC=$(stat -c "%a" "$FILE")
 UID=$(stat -c "%U" "$FILE")
 NUM_UID=$(stat -c "%u" "$FILE")
 GID=$(stat -c "%G" "$FILE")
 NUM_GID=$(stat -c "%g" "$FILE")
-
 FAIL=0
+
 
 # Verificar permisos
 if [ "$NIVEL_ACC" -gt "$NIVEL_ACC_ESPERADO" ]; then
@@ -46,4 +45,6 @@ if [ "$FAIL" -eq 0 ]; then
     echo -e "  \033[0;32m** PASS **\033[0m $FILE esta correctamente configurado."
 else
     echo -e "  \033[0;31m** FAIL **\033[0m $FILE requiere hardening."
+    echo -e "$FILE debe ser 'Access: (0640/-rw-r-----) Uid: ( 0/ root) Gid: ( 42/ shadow)' pero es: "
+    stat -Lc 'Access: (%#a/%A) Uid: ( %u/ %U) Gid: ( %g/ %G)' "$FILE"
 fi

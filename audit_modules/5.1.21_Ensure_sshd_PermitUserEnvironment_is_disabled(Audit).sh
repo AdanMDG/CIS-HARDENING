@@ -16,5 +16,4 @@
         echo -e "Debe retornar: 'permitrootlogin no' para prohibir completamente el acceso SSH como root"
     fi
 
-    echo "[*] Auditoría finalizada."
 }

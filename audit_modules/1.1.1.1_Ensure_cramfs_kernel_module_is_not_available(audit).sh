@@ -103,7 +103,7 @@
         [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
         #Como hay configuraciones correctas (l_output no vacío), las muestra
         #- Reason(s) for audit failure:
-        #- module: "cramfs" is loadable: "install /bin/true"
-        #- module: "cramfs" is not deny listed
+        #- módulo: "cramfs" se puede cargar: "install /bin/true"
+        #- módulo: "cramfs" no está en la lista de denegación
     fi
 }
