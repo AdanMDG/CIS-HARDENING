@@ -10,42 +10,42 @@ GID_ROOT="root"
 
 
 if [ ! -e "$FILE" ]; then
-    echo -e "\n- Audit Result:  \033[0;31m ** [FAIL] ** \033[0m "
+    echo -e " Audit Result:  \033[0;31m ** [FAIL] ** \033[0m \n"
     echo "- /etc/shadow no existe."   
     exit 1
 fi
-NIVEL_ACC=$(stat -c "%a" "$FILE")
-UID=$(stat -c "%U" "$FILE")
+NIVEL_ACC=$(stat -c "%#a" "$FILE")
+_UID=$(stat -c "%U" "$FILE")
 NUM_UID=$(stat -c "%u" "$FILE")
-GID=$(stat -c "%G" "$FILE")
+_GID=$(stat -c "%G" "$FILE")
 NUM_GID=$(stat -c "%g" "$FILE")
 FAIL=0
 
 
 # Verificar permisos
 if [ "$NIVEL_ACC" -gt "$NIVEL_ACC_ESPERADO" ]; then
-    output=$(echo -e "  \033[0;31m [FAIL] :\033[0m Permisos muy permisivos ($NIVEL_ACC), se esperaba 640 o menos")
+    output="$output $(echo -e "\n- Permisos muy permisivos ($NIVEL_ACC), se esperaba 640 o menos")"
     FAIL=1
 fi
 
 # Verificar UID
-if [ "$UID" != "$UID_ESPERADO" ] || [ "$NUM_UID" != "$NUM_UID_ESPERADO" ]; then
-    output=$(echo -e "  \033[0;31m [FAIL] :\033[0m UID debe ser 0/root (actual: $NUM_UID/$UID)")
+if [ "$_UID" != "$UID_ESPERADO" ] || [ "$NUM_UID" != "$NUM_UID_ESPERADO" ]; then
+    output="$output $(echo -e "\n- UID debe ser 0/root (actual: $NUM_UID/$_UID)")"
     FAIL=1
 fi
 
 # Verificar GID
-if [ "$GID" != "$GID_ESPERADO" ] && [ "$GID" != "$GID_ROOT" ]; then
-    output=$(echo -e "  \033[0;31m [FAIL] :\033[0m GID debe ser root o shadow (actual: $GID)")
+if [ "$_GID" != "$GID_ESPERADO" ] && [ "$_GID" != "$GID_ROOT" ]; then
+    output="$output $(echo -e " \n- GID debe ser root o shadow (actual: $_GID)")"
     FAIL=1
 fi
 
 # Resultado final
 if [ "$FAIL" -eq 0 ]; then
-    output=$(echo -e "  \033[0;32m** [PASS] **\033[0m $FILE esta correctamente configurado.")
+    output="$(echo -e "  \033[0;32m** [PASS] **\033[0m $FILE esta correctamente configurado.") $output"
 else
-    output=$(echo -e "  \033[0;31m** [FAIL] **\033[0m $FILE requiere hardening.")
-    echo -e "$FILE debe ser 'Access: (0640/-rw-r-----) Uid: ( 0/ root) Gid: ( 42/ shadow)' pero es: "
-    stat -Lc 'Access: (%#a/%A) Uid: ( %u/ %U) Gid: ( %g/ %G)' "$FILE"
+    output=" $(echo -e "  \033[0;31m** [FAIL] **\033[0m $FILE requiere hardening.") $output"
+    echo -e "$output \n $FILE debe ser 'Access: (0640/-rw-r-----) Uid: ( 0/ root) Gid: ( 42/ shadow)' pero es: "
+    output="$output \n $(stat -Lc 'Access: (%#a/%A) Uid: ( %u/ %U) Gid: ( %g/ %G)' "$FILE")"
     echo -e "$output"
 fi
