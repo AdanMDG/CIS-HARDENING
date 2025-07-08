@@ -26,9 +26,10 @@ function check_root() {
 #      SECCION 1: INICIO       #
 #==============================#
 
-function actualizar_sistem() {
+function update_system() {
     log "Actualizando el sistema y los paquetes base"
     apt update && apt upgrade -y
+    echo -e ">>> [Sistema y paquetes base actualizados] <<<"
 }
 
 #==============================#
@@ -53,10 +54,10 @@ function audit_modulos() {
         echo -e "\e[33m==============================\e[0m"
         
 
-        if echo "$output" | grep -q "\*\* PASS \*\*"; then
+        if echo "$output" | grep -q "PASS"; then
             pass=$(<"$TEMP_PASS_COUNT")
             echo $((pass + 1)) > "$TEMP_PASS_COUNT"
-        elif echo "$output" | grep -q "\*\* FAIL \*\*"; then
+        elif echo "$output" | grep -q "FAIL"; then
             fail=$(<"$TEMP_FAIL_COUNT")
             echo $((fail + 1)) > "$TEMP_FAIL_COUNT"
         fi
@@ -81,6 +82,7 @@ function audit_modulos() {
     else
         log "Sin tests ejecutados."
     fi
+    echo -e ">>> [Auditoria finalizada] <<<"
 }
 
 #==============================#
@@ -95,6 +97,7 @@ function hardening_modulos() {
         echo -e "\e[33m==============================\e[0m"
         bash "$script" </dev/tty
     done
+    echo -e ">>> [Hardening finalizado] <<<"
 }
 
 
@@ -105,14 +108,14 @@ function hardening_modulos() {
 function mostrar_ayuda() {
     echo "Uso: $0 [seccion]"
     echo "Secciones disponibles:"
-    echo "  actualizar_sistem             -> Actualizar sistema y paquetes base"
+    echo "  update_system      -> Actualizar sistema y paquetes base"
     echo "  audit              -> Audita el sistema "
     echo "  hardening          -> Hardeniza el sistema "
     echo "  todo               -> Ejecutar todo"
 }
 
 function ejecutar_todo() {
-    actualizar_sistem
+    update_system
     audit
     hardening
     audit
@@ -125,11 +128,10 @@ function ejecutar_todo() {
 check_root
 
 case "$CIS_SECTION" in
-    actualizar_sistem) actualizar_sistem ;;
+    update_system) update_system ;;
     audit) audit_modulos ;;
     hardening) hardening_modulos ;;
     todo) ejecutar_todo ;;
     *) mostrar_ayuda ;;
 esac
 
-log "Script finalizado."
