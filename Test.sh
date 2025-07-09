@@ -42,39 +42,55 @@ function update_system() {
 function audit_modulos() {
     TEMP_PASS_COUNT=$(mktemp)
     TEMP_FAIL_COUNT=$(mktemp)
+    TEMP_WARNING_COUNT=$(mktemp)
     TEMP_TOTAL=$(mktemp)
+    SALIDA=""
 
     echo 0 > "$TEMP_PASS_COUNT"
     echo 0 > "$TEMP_FAIL_COUNT"
+    echo 0 > "$TEMP_WARNING_COUNT"
     echo 0 > "$TEMP_TOTAL"
 
     TEST_DIR="./audit_modules"
-    echo -e "\3[1;34;47m RESULTADO DE LA AUDITORIA \e[1;39;49m "
+    echo -e "\e[1;34;47m RESULTADO DE LA AUDITORIA \e[1;39;49m "
     find "$TEST_DIR" -type f -name "*.sh" | while read -r script; do
         echo -e "\e[33m==============================\e[0m"
         output=$(bash "$script")
-        echo -e "\033[34m Auditando => $script => $output \033[0m"
-        echo -e "\e[33m==============================\e[0m"
+        MODULO=$(echo "$script" | cut -d'_' -f1)
         if echo "$output" | grep -q "PASS"; then
             pass=$(<"$TEMP_PASS_COUNT")
             echo $((pass + 1)) > "$TEMP_PASS_COUNT"
+            echo -e "\e[1;32;47m [SAFE] \e[1;39;49m => MODULO $MODULO"
         elif echo "$output" | grep -q "FAIL"; then
             fail=$(<"$TEMP_FAIL_COUNT")
             echo $((fail + 1)) > "$TEMP_FAIL_COUNT"
+            echo -e "\e[1;31;47m [UNSAFE] \e[1;39;49m => MODULO  $MODULO "
+            SALIDA=" $SALIDA \n $output "
+        else
+            warn=$(<"$TEMP_WARNING_COUNT")
+            echo $((warn + 1)) > "$TEMP_WARNING_COUNT"
+            echo -e "\e[1;33;47m [WARNING] \e[1;39;49m =>\033[34m MODULO  $MODULO => "
+            SALIDA=" $SALIDA \n $output "
         fi
         
+        echo -e "\e[33m==============================\e[0m"
+
         total=$(<"$TEMP_TOTAL")
         echo $((total + 1)) > "$TEMP_TOTAL"
     done
 
+    WARN_COUNT=$(<"$TEMP_WARNING_COUNT")
     FAIL_COUNT=$(<"$TEMP_FAIL_COUNT")
     PASS_COUNT=$(<"$TEMP_PASS_COUNT")
     TOTAL=$(<"$TEMP_TOTAL")
     
-    log "==== RESULTADOS ===="
+    log "\e[1;34;47m ==== MODULOS INSEGUROS E INFORMACION RELEVANTE ==== \e[1;39;49m"
+    log "\n $SALIDA \n "
+    log "\e[1;34;47m ==== RESULTADOS ==== \e[1;39;49m"
     log " Totales: $TOTAL"
     log " OK (PASS): $PASS_COUNT"
     log " Fallos (FAIL): $FAIL_COUNT"
+    log " Advertencias (WARNING): $WARN_COUNT"
 
     if (( TOTAL > 0 )); then
         SCORE=$(( PASS_COUNT * 100 / TOTAL ))
@@ -83,7 +99,7 @@ function audit_modulos() {
     else
         log "Sin tests ejecutados."
     fi
-    echo -e ">>> [Auditoria finalizada] <<<"
+    echo -e "\e[1;34;47m >>> [AUDITORIA FINALIZADA] <<< \e[1;39;49m "
 }
 
 #==============================#

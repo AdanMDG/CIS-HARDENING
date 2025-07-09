@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 {
-    l_output="" l_output2="" l_output3="" l_dl="" salida=""# Unset output variables
+    l_output="" l_output2="" l_output3="" l_dl="" # Unset output variables
         #l_output: Mensajes de configuración correcta
         #l_output2: Errores de auditoría
         #l_output3: Información adicional
@@ -96,15 +96,15 @@
     #Si es verdadero: Imprime información sobre dónde existe el módulo
     if [ -z "$l_output2" ]; then
     # Verifica si l_output2 está vacía (no hay errores)
-        echo -e " \e[1;32;47m ** [PASS] ** \e[1;39;49m \n$l_output\n" >> "$salida"
+    #\e[1;32;47m \e[1;32;47m \e[1;39;49m
+        echo -e " Audit Result: \033[0;32m ** [PASS] ** \033[0m \n$l_output\n"
         #Muestra contenido de l_output (configuraciones correctas)
     else
-        echo -e " \e[1;31;47m ** [FAIL] ** \e[1;39;49m \n - Reason(s) for audit failure:\n$l_output2\n" >> "$salida"
-        [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n" >> "$salida"
+        echo -e " Audit Result: \033[0;31m ** [FAIL] ** \033[0m \n - Reason(s) for audit failure:\n$l_output2\n"
+        [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
         #Como hay configuraciones correctas (l_output no vacío), las muestra
         #- Reason(s) for audit failure:
         #- módulo: "cramfs" se puede cargar: "install /bin/true"
         #- módulo: "cramfs" no está en la lista de denegación
     fi
-    bash ../registrar_log.sh "$salida" "$log_auditorias.log"
 }
