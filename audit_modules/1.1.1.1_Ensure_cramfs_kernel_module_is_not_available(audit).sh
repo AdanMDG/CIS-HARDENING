@@ -97,10 +97,10 @@
     if [ -z "$l_output2" ]; then
     # Verifica si l_output2 está vacía (no hay errores)
     #\e[1;32;47m \e[1;32;47m \e[1;39;49m
-        echo -e " Audit Result: \033[0;32m ** [PASS] ** \033[0m \n$l_output\n"
+        echo -e " Audit Result: \033[1;32;47m ** [PASS] ** \033[0;39;49m \n$l_output\n"
         #Muestra contenido de l_output (configuraciones correctas)
     else
-        echo -e " Audit Result: \033[0;31m ** [FAIL] ** \033[0m \n - Reason(s) for audit failure:\n$l_output2\n"
+        echo -e " Audit Result: \033[1;31;47m ** [FAIL] ** \033[0;39;49m \n - Reason(s) for audit failure:\n$l_output2\n"
         [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
         #Como hay configuraciones correctas (l_output no vacío), las muestra
         #- Reason(s) for audit failure:

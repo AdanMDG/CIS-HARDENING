@@ -38,14 +38,14 @@
     fi
     # Report results. If no failures output in l_output2, we pass
     if [ -z "$l_output2" ]; then
-        echo -e " Audit Result: \033[0;32m ** [PASS] ** \033[0m "
+        echo -e " Audit Result: \033[1;32;47m ** [PASS] ** \033[0;39;49m "
         if [ -z "$l_output" ]; then
             echo -e "\n - El sistema no tiene wireless NICs instaladas"
         else
             echo -e "\n$l_output\n"
         fi
     else
-        echo -e " Audit Result:s \033[0;31m ** [FAIL] ** \033[0m \n - Reason(s) for audit failure:\n$l_output2\n"
+        echo -e " Audit Result:s \033[1;31;47m ** [FAIL] ** \033[0;39;49m \n - Reason(s) for audit failure:\n$l_output2\n"
         [ -n "$l_output" ] && echo -e "\n- Configurado correctamente:\n$l_output\n"
     fi
 }

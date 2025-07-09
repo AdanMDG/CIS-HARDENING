@@ -14,7 +14,7 @@ LOG_FILE="/home/debian-adan/Desktop/Tesis/CIS-HARDENING/logs/audit.log"
 CIS_SECTION="$1"
 
 function log() {
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" | tee -a "$LOG_FILE"
+    echo -e " $1" | tee -a "$LOG_FILE"
 }
 
 function check_root() {
@@ -44,7 +44,7 @@ function audit_modulos() {
     TEMP_FAIL_COUNT=$(mktemp)
     TEMP_WARNING_COUNT=$(mktemp)
     TEMP_TOTAL=$(mktemp)
-    SALIDA=""
+    TEMP_SALIDA=$(mktemp)
 
     echo 0 > "$TEMP_PASS_COUNT"
     echo 0 > "$TEMP_FAIL_COUNT"
@@ -52,25 +52,24 @@ function audit_modulos() {
     echo 0 > "$TEMP_TOTAL"
 
     TEST_DIR="./audit_modules"
-    echo -e "\e[1;34;47m RESULTADO DE LA AUDITORIA \e[1;39;49m "
+    echo -e "\e[1;34;47m RESULTADO DE LA AUDITORIA DEL [$(date '+%Y-%m-%d %H:%M:%S')] \e[0;39;49m "
     find "$TEST_DIR" -type f -name "*.sh" | while read -r script; do
         echo -e "\e[33m==============================\e[0m"
         output=$(bash "$script")
-        MODULO=$(echo "$script" | cut -d'_' -f1)
         if echo "$output" | grep -q "PASS"; then
             pass=$(<"$TEMP_PASS_COUNT")
             echo $((pass + 1)) > "$TEMP_PASS_COUNT"
-            echo -e "\e[1;32;47m [SAFE] \e[1;39;49m => MODULO $MODULO"
+            echo -e "\e[1;32;47m [SAFE] \e[1;39;49m => MODULO $(basename "$script")"
         elif echo "$output" | grep -q "FAIL"; then
             fail=$(<"$TEMP_FAIL_COUNT")
             echo $((fail + 1)) > "$TEMP_FAIL_COUNT"
-            echo -e "\e[1;31;47m [UNSAFE] \e[1;39;49m => MODULO  $MODULO "
-            SALIDA=" $SALIDA \n $output "
+            echo -e "\e[1;31;47m [UNSAFE] \e[1;39;49m => MODULO $(basename "$script")"
+            echo -e "\e[1m MODULO $(basename "$script") \e[0m \n $output" >> "$TEMP_SALIDA"
         else
             warn=$(<"$TEMP_WARNING_COUNT")
             echo $((warn + 1)) > "$TEMP_WARNING_COUNT"
-            echo -e "\e[1;33;47m [WARNING] \e[1;39;49m =>\033[34m MODULO  $MODULO => "
-            SALIDA=" $SALIDA \n $output "
+            echo -e "\e[1;33;47m [WARNING] \e[1;39;49m =>\033[34m MODULO $(basename "$script")"
+            echo -e "\e[1m MODULO $(basename "$script") \e[0m \n $output" >> "$TEMP_SALIDA"
         fi
         
         echo -e "\e[33m==============================\e[0m"
@@ -79,14 +78,17 @@ function audit_modulos() {
         echo $((total + 1)) > "$TEMP_TOTAL"
     done
 
+    SALIDA=$(cat "$TEMP_SALIDA")
     WARN_COUNT=$(<"$TEMP_WARNING_COUNT")
     FAIL_COUNT=$(<"$TEMP_FAIL_COUNT")
     PASS_COUNT=$(<"$TEMP_PASS_COUNT")
     TOTAL=$(<"$TEMP_TOTAL")
     
-    log "\e[1;34;47m ==== MODULOS INSEGUROS E INFORMACION RELEVANTE ==== \e[1;39;49m"
-    log "\n $SALIDA \n "
-    log "\e[1;34;47m ==== RESULTADOS ==== \e[1;39;49m"
+    if [ -n "$SALIDA" ]; then
+        log "\e[1;34;47m ==== MODULOS INSEGUROS E INFORMACION RELEVANTE ==== \e[0;39;49m"
+        log "\n $SALIDA \n "
+    fi
+    log "\e[1;34;47m ==== RESULTADOS ==== \e[0;39;49m"
     log " Totales: $TOTAL"
     log " OK (PASS): $PASS_COUNT"
     log " Fallos (FAIL): $FAIL_COUNT"
@@ -95,7 +97,7 @@ function audit_modulos() {
     if (( TOTAL > 0 )); then
         SCORE=$(( PASS_COUNT * 100 / TOTAL ))
         log " Puntaje de cumplimiento: $SCORE%"
-        log "[$(date)] Score: $SCORE% ($PASS_COUNT/$TOTAL)" >> /var/log/test_score.log
+        log "Score: $SCORE% ($PASS_COUNT/$TOTAL)" >> /var/log/test_score.log
     else
         log "Sin tests ejecutados."
     fi
