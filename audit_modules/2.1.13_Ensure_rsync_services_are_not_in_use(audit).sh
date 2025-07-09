@@ -19,6 +19,6 @@ if dpkg-query -W -f='${binary:Package}\t${Status}\t${db:Status-Status}\n' rsync 
     fi
 
 else
-    echo "- rsync no este instalado."
     echo -e " Audit Result:  \033[0;32m ** [PASS] ** \033[0m "
+    echo "\n- rsync no este instalado."
 fi

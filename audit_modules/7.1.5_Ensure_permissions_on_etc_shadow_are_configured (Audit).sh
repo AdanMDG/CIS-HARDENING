@@ -47,5 +47,5 @@ else
     output=" $(echo -e "  \033[0;31m** [FAIL] **\033[0m $FILE requiere hardening.") $output"
     echo -e "$output \n $FILE debe ser 'Access: (0640/-rw-r-----) Uid: ( 0/ root) Gid: ( 42/ shadow)' pero es: "
     output="$output \n $(stat -Lc 'Access: (%#a/%A) Uid: ( %u/ %U) Gid: ( %g/ %G)' "$FILE")"
-    echo -e "$output"
 fi
+echo -e "$output"
