@@ -45,7 +45,7 @@
             echo -e "\n$l_output\n"
         fi
     else
-        echo -e " Audit Result:s \033[1;31;47m ** [FAIL] ** \033[0;39;49m \n - Reason(s) for audit failure:\n$l_output2\n"
+        echo -e " Audit Result:s \033[1;31;47m ** [FAIL] ** \033[0;39;49m \n - Razones:\n$l_output2\n"
         [ -n "$l_output" ] && echo -e "\n- Configurado correctamente:\n$l_output\n"
     fi
 }

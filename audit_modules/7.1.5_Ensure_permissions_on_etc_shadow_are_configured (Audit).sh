@@ -11,7 +11,7 @@ GID_ROOT="root"
 
 if [ ! -e "$FILE" ]; then
     echo -e " Audit Result:  \033[1;31;47m ** [FAIL] ** \033[0;39;49m \n"
-    echo "- /etc/shadow no existe."   
+    echo "- /etc/shadow no existe y esto es grave ya que este almacena los hashes de las contraseñas de los usuarios del sistema."   
     exit 1
 fi
 NIVEL_ACC=$(stat -c "%#a" "$FILE")
@@ -42,10 +42,10 @@ fi
 
 # Resultado final
 if [ "$FAIL" -eq 0 ]; then
-    output="$(echo -e "  \033[1;32;47m ** [PASS] ** \033[0;39;49m  $FILE esta correctamente configurado.") $output"
+    echo -e "  Audit Result: \033[1;32;47m ** [PASS] ** \033[0;39;49m  $FILE esta correctamente configurado."
 else
-    output=" $(echo -e "  \033[1;31;47m ** [FAIL] ** \033[0;39;49m $FILE requiere hardening.") $output"
-    echo -e "$output \n $FILE debe ser 'Access: (0640/-rw-r-----) Uid: ( 0/ root) Gid: ( 42/ shadow)' pero es: "
+    output="$output \n $FILE debe ser 'Access: (0640/-rw-r-----) Uid: ( 0/ root) Gid: ( 42/ shadow)' pero es: "
     output="$output \n $(stat -Lc 'Access: (%#a/%A) Uid: ( %u/ %U) Gid: ( %g/ %G)' "$FILE")"
+    echo -e " Audit Result: \033[1;31;47m ** [FAIL] ** \033[0;39;49m \n Razones: \n $output"
+    
 fi
-echo -e "$output"

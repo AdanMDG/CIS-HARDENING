@@ -100,8 +100,8 @@
         echo -e " Audit Result: \033[1;32;47m ** [PASS] ** \033[0;39;49m \n$l_output\n"
         #Muestra contenido de l_output (configuraciones correctas)
     else
-        echo -e " Audit Result: \033[1;31;47m ** [FAIL] ** \033[0;39;49m \n - Reason(s) for audit failure:\n$l_output2\n"
-        [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
+        echo -e " Audit Result: \033[1;31;47m ** [FAIL] ** \033[0;39;49m \n - Razones:\n$l_output2\n"
+        [ -n "$l_output" ] && echo -e "\n- Configuracion correcta :\n$l_output\n"
         #Como hay configuraciones correctas (l_output no vacío), las muestra
         #- Reason(s) for audit failure:
         #- módulo: "cramfs" se puede cargar: "install /bin/true"
