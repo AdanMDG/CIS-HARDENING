@@ -4,6 +4,8 @@
 # Fecha: 02/07/25
 # Uso: Ejecutar como root
 
+#\e[1;32;47m \e[1;32;47m \e[1;39;49m
+
 #==============================#
 #         CONFIGURACION        #
 #==============================#
@@ -47,13 +49,12 @@ function audit_modulos() {
     echo 0 > "$TEMP_TOTAL"
 
     TEST_DIR="./audit_modules"
+    echo -e "\3[1;34;47m RESULTADO DE LA AUDITORIA \e[1;39;49m "
     find "$TEST_DIR" -type f -name "*.sh" | while read -r script; do
         echo -e "\e[33m==============================\e[0m"
         output=$(bash "$script")
         echo -e "\033[34m Auditando => $script => $output \033[0m"
         echo -e "\e[33m==============================\e[0m"
-        
-
         if echo "$output" | grep -q "PASS"; then
             pass=$(<"$TEMP_PASS_COUNT")
             echo $((pass + 1)) > "$TEMP_PASS_COUNT"
