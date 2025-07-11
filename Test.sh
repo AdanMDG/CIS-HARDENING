@@ -88,7 +88,7 @@ function audit_modulos() {
         log "\e[1;34;47m ==== MODULOS INSEGUROS E INFORMACION RELEVANTE ==== \e[0;39;49m"
         log "\n $SALIDA \n "
     fi
-    log "\e[1;34;47m ==== RESULTADOS ==== \e[0;39;49m"
+    log "\e[1;34;47m ==== RESULTADOS ==== \e[1;39;49m"
     log " Totales: $TOTAL"
     log " OK (PASS): $PASS_COUNT"
     log " Fallos (FAIL): $FAIL_COUNT"
